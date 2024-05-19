@@ -1,0 +1,7 @@
+from models.res_18 import res_18
+from models.stgcn_skeleton_freeze import Stgcnplusplus_skeleton_freeze
+from models.res_pd_freeze import Res_pd_freeze
+from models.pd_skeandfer_freeze import PD_skeandfer_freeze
+from models.res_fer_nofreeze import Res_fer_nofreeze
+from models.res_onlypdface_freeze import Res_onlypdface_freeze
+from models.new_head_model import newmodel_freeze

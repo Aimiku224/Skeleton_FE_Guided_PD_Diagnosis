@@ -1,0 +1,76 @@
+{
+    "model": {
+        "type": "RecognizerGCN",
+        "backbone": {
+            "type": "STGCN",
+            "gcn_adaptive": "init",
+            "gcn_with_res": true,
+            "tcn_type": "mstcn",
+            "graph_cfg": {
+                "layout": "coco",
+                "mode": "spatial"
+            }
+        },
+        "cls_head": {
+            "type": "GCNHead",
+            "num_classes": 2,
+            "in_channels": 256
+        }
+    },
+    "data": {
+        "videos_per_gpu": 16,
+        "workers_per_gpu": 2,
+        "train_dataloader": {"videos_per_gpu": 1},
+        "val_dataloader": {"videos_per_gpu": 1},
+        "test_dataloader": {"videos_per_gpu": 1},
+        "train": {
+            "type": "RepeatDataset",
+            "times": 1,
+            "dataset": {
+                "type": "PoseDataset",
+                "ann_file": "Skeleton_FE_Guided_PD_Diagnosis/data/PDandNoPD_new.pkl",
+                "pipeline": [
+                    {"type": "PreNormalize2D"},
+                    {"type": "GenSkeFeat", "dataset": "coco", "feats": ["j"]},
+                    {"type": "UniformSample", "clip_len": 100, "num_clips": 1},
+                    {"type": "PoseDecode"},
+                    {"type": "FormatGCNInput", "num_person": 1},
+                    {"type": "Collect", "keys": ["keypoint", "label"], "meta_keys": []},
+                    {"type": "ToTensor", "keys": ["keypoint"]}
+                ],
+                "split": "train1",
+                "test_mode": false
+            }
+        },
+        "val": {
+            "type": "PoseDataset",
+            "ann_file": "Skeleton_FE_Guided_PD_Diagnosis/data/PDandNoPD_new.pkl",
+            "pipeline": [
+                {"type": "PreNormalize2D"},
+                {"type": "GenSkeFeat", "dataset": "coco", "feats": ["j"]},
+                {"type": "UniformSample", "clip_len": 100, "num_clips": 1},
+                {"type": "PoseDecode"},
+                {"type": "FormatGCNInput", "num_person": 1},
+                {"type": "Collect", "keys": ["keypoint", "label"], "meta_keys": []},
+                {"type": "ToTensor", "keys": ["keypoint"]}
+            ],
+            "split": "validation1"
+        },
+        "test": {
+            "type": "PoseDataset",
+            "ann_file": "Skeleton_FE_Guided_PD_Diagnosis/data/PDandNoPD_new.pkl",
+            "pipeline": [
+                {"type": "PreNormalize2D"},
+                {"type": "GenSkeFeat", "dataset": "coco", "feats": ["j"]},
+                {"type": "UniformSample", "clip_len": 100, "num_clips": 10},
+                {"type": "PoseDecode"},
+                {"type": "FormatGCNInput", "num_person": 1},
+                {"type": "Collect", "keys": ["keypoint", "label"], "meta_keys": []},
+                {"type": "ToTensor", "keys": ["keypoint"]}
+            ],
+            "split": "test"
+        }
+    },
+    "pretrained_model": "Skeleton_FE_Guided_PD_Diagnosis/pretrained_model/stgcn++_fold1_t1_epoch_200.pth",
+    "seed": 140224
+}
