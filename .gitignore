@@ -23,3 +23,6 @@ analyze_weights_featuremap/
 
 # Python compiled files
 *.pyc
+
+# 忽略 stgcn++all.json 文件
+models/stgcn++all.json
